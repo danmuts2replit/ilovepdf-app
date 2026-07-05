@@ -21,7 +21,7 @@ export async function createSubscriptionFromPayment({ userId, planName, amount, 
   await pool.query(
     `INSERT INTO subscriptions (user_id, plan_name, amount, currency, status, start_date, end_date, paystack_reference)
      VALUES (?, ?, ?, ?, 'active', ?, ?, ?)`,
-    [userId, planName, amount, currency || 'USD', startDate, endDate, paystackReference || null]
+    [userId, planName, amount, currency || 'KES', startDate, endDate, paystackReference || null]
   );
 
   return { startDate, endDate };

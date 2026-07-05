@@ -8,7 +8,7 @@
     <% Object.values(plans).forEach(function(plan) { %>
       <div class="plan-card">
         <h2><%= plan.label %></h2>
-        <p class="plan-price">$<%= plan.amountUsd %> <span>/ <%= plan.durationDays %> days</span></p>
+        <p class="plan-price">KES <%= plan.amountKes %> <span>/ <%= plan.durationDays %> days</span></p>
         <% if (locals.isAuthenticated) { %>
           <form method="POST" action="/payment/initialize">
             <input type="hidden" name="plan" value="<%= plan.name %>" />

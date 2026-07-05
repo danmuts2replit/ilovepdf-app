@@ -11,12 +11,25 @@ async function recordPayment(txData, status, userId) {
       userId || null,
       (txData && txData.metadata && txData.metadata.planName) || 'unknown',
       txData ? Number(txData.amount || 0) / 100 : 0,
-      (txData && txData.currency) || 'USD',
+      (txData && txData.currency) || 'KES',
       status,
       (txData && txData.reference) || 'unknown',
       JSON.stringify(txData || {}),
     ]
   );
+}
+
+// Paystack fires both the browser redirect (GET /payment/callback) and a server-to-server
+// webhook (POST /payment/webhook) for the same successful transaction. Without this guard,
+// both handlers race to record a 'success' payment and create a subscription, double-crediting
+// the customer. Reference is the natural idempotency key for a single transaction.
+async function isReferenceAlreadyProcessed(reference) {
+  if (!reference) return false;
+  const [rows] = await pool.query(
+    `SELECT id FROM payments WHERE paystack_reference = ? AND status = 'success' LIMIT 1`,
+    [reference]
+  );
+  return rows.length > 0;
 }
 
 export async function initializePayment(req, res, next) {
@@ -31,9 +44,9 @@ export async function initializePayment(req, res, next) {
 
     const data = await initializeTransaction({
       email: user.email,
-      amountMajor: planDef.amountUsd,
+      amountMajor: planDef.amountKes,
       planName: planDef.name,
-      currency: process.env.PAYSTACK_CURRENCY || 'USD',
+      currency: process.env.PAYSTACK_CURRENCY || 'KES',
       metadata: { userId: user.id },
     });
 
@@ -68,18 +81,22 @@ export async function paymentCallback(req, res, next) {
     const planName = txData.metadata && txData.metadata.planName;
     const userId = (txData.metadata && txData.metadata.userId) || req.session.userId;
 
-    await recordPayment(txData, 'success', userId);
+    const alreadyProcessed = await isReferenceAlreadyProcessed(reference);
 
-    if (planName && userId) {
-      const planDef = getPlan(planName);
-      if (planDef) {
-        await createSubscriptionFromPayment({
-          userId,
-          planName,
-          amount: planDef.amountUsd,
-          currency: txData.currency || 'USD',
-          paystackReference: reference,
-        });
+    if (!alreadyProcessed) {
+      await recordPayment(txData, 'success', userId);
+
+      if (planName && userId) {
+        const planDef = getPlan(planName);
+        if (planDef) {
+          await createSubscriptionFromPayment({
+            userId,
+            planName,
+            amount: planDef.amountKes,
+            currency: txData.currency || 'KES',
+            paystackReference: reference,
+          });
+        }
       }
     }
 
@@ -109,18 +126,22 @@ export async function paystackWebhook(req, res, next) {
       const planName = txData.metadata && txData.metadata.planName;
       const userId = txData.metadata && txData.metadata.userId;
 
-      await recordPayment(txData, 'success', userId);
+      const alreadyProcessed = await isReferenceAlreadyProcessed(txData.reference);
 
-      if (planName && userId) {
-        const planDef = getPlan(planName);
-        if (planDef) {
-          await createSubscriptionFromPayment({
-            userId,
-            planName,
-            amount: planDef.amountUsd,
-            currency: txData.currency || 'USD',
-            paystackReference: txData.reference,
-          });
+      if (!alreadyProcessed) {
+        await recordPayment(txData, 'success', userId);
+
+        if (planName && userId) {
+          const planDef = getPlan(planName);
+          if (planDef) {
+            await createSubscriptionFromPayment({
+              userId,
+              planName,
+              amount: planDef.amountKes,
+              currency: txData.currency || 'KES',
+              paystackReference: txData.reference,
+            });
+          }
         }
       }
     }
