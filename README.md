@@ -11,15 +11,26 @@ This is a **standalone** project (its own GitHub repo) and is completely separat
 - MySQL (via `mysql2`) — e.g. hosted on Hostinger
 - Sessions via `express-session`
 - Passwords hashed with `bcryptjs`
-- Payments via Paystack (weekly $3 / monthly $6 / yearly $40)
+- Payments via Paystack (weekly KES 390 / monthly KES 779 / yearly KES 5,179)
+- PDF processing via `pdf-lib`, `pdf-parse`, and `adm-zip`
 
 ## Features
 
-- Guest visitors get **one free use** of any tool (tracked by device fingerprint + IP)
-- Registered users also get **one free use**, then a **3-day free trial** (once per account), then must subscribe
+- Guest visitors get **7 free uses** across any tools (tracked by device fingerprint + IP)
+- Registered users also get **7 free uses**, then must subscribe (no separate trial period)
 - Paystack subscription checkout (initialize → hosted checkout → callback verify) plus webhook handling
+- Real PDF processing for merge, split, remove/extract pages, rotate, organize, repair, compress,
+  add page numbers, watermark, crop, flatten, n-up, jpg-to-pdf, and pdf-to-text. Tools requiring
+  infrastructure this host doesn't provide (office-format conversion, OCR, AI features, etc.) are
+  clearly marked "not available yet" instead of faking a result.
 - Usage tracking per tool, per user/guest
 - Admin dashboard with usage/revenue stats, protected by an `ADMIN_KEY`
+
+## Requirements
+
+- **Node.js >= 20.16.0** (required by `pdf-parse@2.x`). If your Hostinger Node.js App is set to an
+  older Node version, switch it to 20.16+ (or a later LTS) in hPanel's Node.js App settings before
+  deploying, or PDF-to-text extraction (and possibly `npm install` itself) will fail.
 
 ## Setup
 
@@ -72,7 +83,10 @@ ilovepdf-app/
 
 ## PDF processing
 
-`src/services/pdfTools.service.js` currently contains a placeholder pipeline (it records the operation and generates a stub output file) so the full usage/trial/subscription/payment flow can be exercised end-to-end. Wire in real tool-specific PDF processing there per `toolSlug`.
+`src/services/pdfTools.service.js` implements real PDF processing (via `pdf-lib`, `pdf-parse`,
+and `adm-zip`) for every tool marked `available: true` in `src/config/tools.js`. Tools not yet
+implemented are marked `available: false` there and return a clear "not available yet" message
+instead of a fake result — update both files together when adding a new tool.
 
 ## Deploying to Hostinger
 
