@@ -2,6 +2,10 @@ import pool from '../config/database.js';
 import { getActiveSubscription } from './subscription.service.js';
 import { isTrialActive } from './trial.service.js';
 
+// Everyone gets this many free tool uses (guest or logged-in) before a subscription is
+// required. The optional 3-day trial (see trial.service.js) is a bonus on top of these.
+export const FREE_USES_LIMIT = 7;
+
 /**
  * Determine whether the current visitor (logged-in user or guest) may use a tool right now,
  * and under what usage type ('subscription' | 'trial' | 'free').
@@ -19,7 +23,7 @@ export async function checkAccess({ userId, fingerprint }) {
       `SELECT COUNT(*) AS cnt FROM tool_usage WHERE user_id = ? AND usage_type = 'free'`,
       [userId]
     );
-    if (usageRows[0].cnt === 0) return { allowed: true, type: 'free' };
+    if (usageRows[0].cnt < FREE_USES_LIMIT) return { allowed: true, type: 'free' };
 
     return { allowed: false, type: null };
   }
@@ -27,7 +31,7 @@ export async function checkAccess({ userId, fingerprint }) {
   // Guest visitor - tracked by device/browser fingerprint
   const [guestRows] = await pool.query('SELECT * FROM guest_usage WHERE fingerprint = ?', [fingerprint]);
   const guest = guestRows[0];
-  if (!guest || guest.used_count === 0) return { allowed: true, type: 'free' };
+  if (!guest || guest.used_count < FREE_USES_LIMIT) return { allowed: true, type: 'free' };
 
   return { allowed: false, type: null };
 }

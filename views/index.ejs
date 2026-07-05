@@ -2,46 +2,25 @@
 
 <section class="hero">
   <div class="container">
-    <span class="eyebrow">100% Free to Try</span>
     <h1>Every PDF tool you need, in one app</h1>
-    <p>Merge, split, compress, convert, edit and secure your PDFs. Try any tool free once — no card required.</p>
+    <p>Merge, split, compress, convert, edit and secure your PDFs. Your first 7 tool uses are free — no card required.</p>
     <a class="btn btn-primary" href="/register">Get Started Free</a>
     <a class="btn btn-outline" href="/pricing">See Pricing</a>
   </div>
 </section>
 
 <section class="container tools-section">
-  <div class="category-tabs">
-    <button type="button" class="category-tab active" data-category="all">All</button>
-    <% categories.forEach(function(category) { %>
-      <button type="button" class="category-tab" data-category="<%= category %>"><%= category %></button>
-    <% }); %>
-  </div>
-
   <% categories.forEach(function(category) { %>
-    <div class="category-group" data-category-group="<%= category %>">
-      <h2 class="category-title"><%= category %> PDF</h2>
-      <div class="tool-grid">
-        <% tools.filter(function(t){ return t.category === category; }).forEach(function(tool) {
-             const icon = getToolIcon(tool.slug);
-        %>
-          <a class="tool-card" href="/tools/<%= tool.slug %>">
-            <div class="tool-icon" style="background: <%= icon.color %>1a; color: <%= icon.color %>;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><%- icon.paths %></svg>
-            </div>
-            <h3><%= tool.name %></h3>
-            <p><%= tool.description %></p>
-          </a>
-        <% }); %>
-      </div>
+    <h2 class="category-title"><%= category %></h2>
+    <div class="tool-grid">
+      <% tools.filter(function(t){ return t.category === category; }).forEach(function(tool) { %>
+        <a class="tool-card" href="/tools/<%= tool.slug %>">
+          <h3><%= tool.name %></h3>
+          <p><%= tool.description %></p>
+        </a>
+      <% }); %>
     </div>
   <% }); %>
-
-  <div class="premium-band">
-    <h2>Get more with Premium</h2>
-    <p>Unlock unlimited access to every PDF tool, with no daily limits and priority processing.</p>
-    <a class="btn btn-primary" href="/pricing">See Plans</a>
-  </div>
 </section>
 
 <%- include('partials/footer') %>

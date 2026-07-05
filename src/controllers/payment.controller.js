@@ -47,7 +47,7 @@ export async function initializePayment(req, res, next) {
       amountMajor: planDef.amountKes,
       planName: planDef.name,
       currency: process.env.PAYSTACK_CURRENCY || 'KES',
-      metadata: { userId: user.id },
+      metadata: { userId: user.id, planCode: planDef.planCode },
     });
 
     if (!data.status) {

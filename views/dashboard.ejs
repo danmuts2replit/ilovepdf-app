@@ -29,24 +29,19 @@
     </div>
 
     <div class="status-card">
-      <h3>Free Tool Use</h3>
-      <% if (freeToolUsed) { %>
-        <p class="status-inactive">Your one-time free tool use has been used</p>
+      <h3>Free Tool Uses</h3>
+      <% if (freeUsesRemaining > 0) { %>
+        <p class="status-active"><%= freeUsesRemaining %> of 7 free tool uses remaining</p>
       <% } else { %>
-        <p class="status-active">You still have your one free tool use available</p>
+        <p class="status-inactive">You've used all 7 free tool uses</p>
       <% } %>
     </div>
   </div>
 
   <h2>All Tools</h2>
   <div class="tool-grid">
-    <% tools.forEach(function(tool) {
-         const icon = getToolIcon(tool.slug);
-    %>
+    <% tools.forEach(function(tool) { %>
       <a class="tool-card" href="/tools/<%= tool.slug %>">
-        <div class="tool-icon" style="background: <%= icon.color %>1a; color: <%= icon.color %>;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><%- icon.paths %></svg>
-        </div>
         <h3><%= tool.name %></h3>
         <p><%= tool.description %></p>
       </a>

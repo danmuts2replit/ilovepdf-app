@@ -1,5 +1,6 @@
 import pool from '../config/database.js';
 import { TOOLS } from '../config/tools.js';
+import { FREE_USES_LIMIT } from '../services/usage.service.js';
 
 export async function renderDashboard(req, res, next) {
   try {
@@ -12,12 +13,12 @@ export async function renderDashboard(req, res, next) {
       `SELECT COUNT(*) AS cnt FROM tool_usage WHERE user_id = ? AND usage_type = 'free'`,
       [userId]
     );
-    const freeToolUsed = usageRows[0].cnt > 0;
+    const freeUsesRemaining = Math.max(0, FREE_USES_LIMIT - usageRows[0].cnt);
 
     res.render('dashboard', {
       title: 'Dashboard',
       user,
-      freeToolUsed,
+      freeUsesRemaining,
       tools: TOOLS,
     });
   } catch (err) {
