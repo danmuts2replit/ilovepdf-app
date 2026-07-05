@@ -3,26 +3,36 @@ import { getPlan } from '../config/plans.js';
 import { initializeTransaction, verifyTransaction, verifyWebhookSignature } from '../services/paystack.service.js';
 import { createSubscriptionFromPayment } from '../services/subscription.service.js';
 
+// Paystack fires both the browser redirect (GET /payment/callback) and a server-to-server
+// webhook (POST /payment/webhook) for the same successful transaction. The application-level
+// isReferenceAlreadyProcessed() check below narrows the race window, but the real guarantee
+// against double-crediting is the DB-level UNIQUE KEY on payments.success_reference (see
+// database/schema.sql) — recordPayment() treats its duplicate-key error (ER_DUP_ENTRY) as a
+// no-op instead of letting it bubble up as a 500.
 async function recordPayment(txData, status, userId) {
-  await pool.query(
-    `INSERT INTO payments (user_id, plan_name, amount, currency, status, paystack_reference, paystack_response_json)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [
-      userId || null,
-      (txData && txData.metadata && txData.metadata.planName) || 'unknown',
-      txData ? Number(txData.amount || 0) / 100 : 0,
-      (txData && txData.currency) || 'KES',
-      status,
-      (txData && txData.reference) || 'unknown',
-      JSON.stringify(txData || {}),
-    ]
-  );
+  try {
+    await pool.query(
+      `INSERT INTO payments (user_id, plan_name, amount, currency, status, paystack_reference, paystack_response_json)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        userId || null,
+        (txData && txData.metadata && txData.metadata.planName) || 'unknown',
+        txData ? Number(txData.amount || 0) / 100 : 0,
+        (txData && txData.currency) || 'KES',
+        status,
+        (txData && txData.reference) || 'unknown',
+        JSON.stringify(txData || {}),
+      ]
+    );
+    return true;
+  } catch (err) {
+    if (err && err.code === 'ER_DUP_ENTRY') {
+      return false;
+    }
+    throw err;
+  }
 }
 
-// Paystack fires both the browser redirect (GET /payment/callback) and a server-to-server
-// webhook (POST /payment/webhook) for the same successful transaction. Without this guard,
-// both handlers race to record a 'success' payment and create a subscription, double-crediting
-// the customer. Reference is the natural idempotency key for a single transaction.
 async function isReferenceAlreadyProcessed(reference) {
   if (!reference) return false;
   const [rows] = await pool.query(
@@ -82,21 +92,21 @@ export async function paymentCallback(req, res, next) {
     const userId = (txData.metadata && txData.metadata.userId) || req.session.userId;
 
     const alreadyProcessed = await isReferenceAlreadyProcessed(reference);
-
+    let recorded = false;
     if (!alreadyProcessed) {
-      await recordPayment(txData, 'success', userId);
+      recorded = await recordPayment(txData, 'success', userId);
+    }
 
-      if (planName && userId) {
-        const planDef = getPlan(planName);
-        if (planDef) {
-          await createSubscriptionFromPayment({
-            userId,
-            planName,
-            amount: planDef.amountKes,
-            currency: txData.currency || 'KES',
-            paystackReference: reference,
-          });
-        }
+    if (recorded && planName && userId) {
+      const planDef = getPlan(planName);
+      if (planDef) {
+        await createSubscriptionFromPayment({
+          userId,
+          planName,
+          amount: planDef.amountKes,
+          currency: txData.currency || 'KES',
+          paystackReference: reference,
+        });
       }
     }
 
@@ -127,21 +137,21 @@ export async function paystackWebhook(req, res, next) {
       const userId = txData.metadata && txData.metadata.userId;
 
       const alreadyProcessed = await isReferenceAlreadyProcessed(txData.reference);
-
+      let recorded = false;
       if (!alreadyProcessed) {
-        await recordPayment(txData, 'success', userId);
+        recorded = await recordPayment(txData, 'success', userId);
+      }
 
-        if (planName && userId) {
-          const planDef = getPlan(planName);
-          if (planDef) {
-            await createSubscriptionFromPayment({
-              userId,
-              planName,
-              amount: planDef.amountKes,
-              currency: txData.currency || 'KES',
-              paystackReference: txData.reference,
-            });
-          }
+      if (recorded && planName && userId) {
+        const planDef = getPlan(planName);
+        if (planDef) {
+          await createSubscriptionFromPayment({
+            userId,
+            planName,
+            amount: planDef.amountKes,
+            currency: txData.currency || 'KES',
+            paystackReference: txData.reference,
+          });
         }
       }
     }

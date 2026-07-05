@@ -94,3 +94,4 @@ instead of a fake result — update both files together when adding a new tool.
 2. Set the environment variables listed above in your hosting environment.
 3. Point your Node.js app entrypoint to `server.js` and ensure it listens on the port Hostinger provides (`process.env.PORT`).
 4. Set your Paystack callback/webhook URLs to `https://app.ilovepdf.shop/payment/callback` and `https://app.ilovepdf.shop/api/paystack/webhook`.
+5. If your database was created before `database/migrations/001_payments_success_reference_unique.sql` existed, run that migration once against it (fresh installs already get it via `database/schema.sql`).

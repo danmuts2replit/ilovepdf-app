@@ -59,7 +59,17 @@ CREATE TABLE IF NOT EXISTS payments (
   paystack_reference VARCHAR(255) NOT NULL,
   paystack_response_json JSON NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+  -- Generated column + unique index enforce "at most one successful payment row
+  -- per reference" at the DB level, closing the race window between the
+  -- browser callback and the server-to-server webhook (both can fire for the
+  -- same transaction and race the application-level check-then-insert guard).
+  -- MySQL has no partial/filtered unique index, so NULL-when-not-success is
+  -- used instead (MySQL treats multiple NULLs in a UNIQUE index as distinct).
+  success_reference VARCHAR(255) GENERATED ALWAYS AS (
+    CASE WHEN status = 'success' THEN paystack_reference ELSE NULL END
+  ) STORED,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+  UNIQUE KEY uniq_success_reference (success_reference)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS admin_stats (
