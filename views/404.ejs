@@ -1,0 +1,9 @@
+<%- include('layout', { title }) %>
+
+<section class="container status-page">
+  <h1 class="status-heading status-error">404</h1>
+  <p><%= typeof message !== 'undefined' && message ? message : "The page you're looking for doesn't exist." %></p>
+  <a class="btn btn-primary" href="/">Back to Home</a>
+</section>
+
+<%- include('partials/footer') %>

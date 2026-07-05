@@ -1,0 +1,25 @@
+<%- include('layout', { title }) %>
+
+<section class="container pricing-section">
+  <h1>Simple, Transparent Pricing</h1>
+  <p>Pick a plan and get unlimited access to every PDF tool.</p>
+
+  <div class="plans-grid">
+    <% Object.values(plans).forEach(function(plan) { %>
+      <div class="plan-card">
+        <h2><%= plan.label %></h2>
+        <p class="plan-price">$<%= plan.amountUsd %> <span>/ <%= plan.durationDays %> days</span></p>
+        <% if (locals.isAuthenticated) { %>
+          <form method="POST" action="/payment/initialize">
+            <input type="hidden" name="plan" value="<%= plan.name %>" />
+            <button type="submit" class="btn btn-primary btn-block">Choose <%= plan.label %></button>
+          </form>
+        <% } else { %>
+          <a class="btn btn-primary btn-block" href="/register">Sign Up to Subscribe</a>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,24 @@
+node_modules/
+.env
+.env.local
+
+# uploaded and processed files
+uploads/*
+!uploads/.gitkeep
+processed/*
+!processed/.gitkeep
+
+# logs
+logs/*
+!logs/.gitkeep
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode/*
+!.vscode/settings.json
+.idea/

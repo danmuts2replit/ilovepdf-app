@@ -1,0 +1,52 @@
+<%- include('layout', { title }) %>
+
+<section class="container dashboard-section">
+  <h1>Welcome back, <%= user.name %></h1>
+  <p class="dashboard-email"><%= user.email %></p>
+
+  <div class="status-cards">
+    <div class="status-card">
+      <h3>Subscription</h3>
+      <% if (subscription) { %>
+        <p class="status-active">Active — <%= subscription.plan_name %> plan</p>
+        <p>Renews/expires: <%= new Date(subscription.end_date).toDateString() %></p>
+      <% } else { %>
+        <p class="status-inactive">No active subscription</p>
+        <a class="btn btn-primary btn-sm" href="/pricing">Upgrade Now</a>
+      <% } %>
+    </div>
+
+    <div class="status-card">
+      <h3>Free Trial</h3>
+      <% if (trialActive) { %>
+        <p class="status-active">Trial active until <%= new Date(user.trial_end).toDateString() %></p>
+      <% } else if (user.trial_used) { %>
+        <p class="status-inactive">Trial already used</p>
+      <% } else { %>
+        <p>You haven't started your 3-day free trial yet.</p>
+        <a class="btn btn-outline btn-sm" href="/trial">Start Free Trial</a>
+      <% } %>
+    </div>
+
+    <div class="status-card">
+      <h3>Free Tool Use</h3>
+      <% if (freeToolUsed) { %>
+        <p class="status-inactive">Your one-time free tool use has been used</p>
+      <% } else { %>
+        <p class="status-active">You still have your one free tool use available</p>
+      <% } %>
+    </div>
+  </div>
+
+  <h2>All Tools</h2>
+  <div class="tool-grid">
+    <% tools.forEach(function(tool) { %>
+      <a class="tool-card" href="/tools/<%= tool.slug %>">
+        <h3><%= tool.name %></h3>
+        <p><%= tool.description %></p>
+      </a>
+    <% }); %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

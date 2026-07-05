@@ -1,0 +1,27 @@
+<%- include('layout', { title }) %>
+
+<section class="container tool-section">
+  <h1><%= tool.name %></h1>
+  <p><%= tool.description %></p>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <p class="alert alert-error"><%= error %></p>
+  <% } %>
+
+  <% if (typeof result !== 'undefined' && result) { %>
+    <div class="alert alert-success">
+      <p>Your file was processed successfully using your <strong><%= result.usageType %></strong> access.</p>
+      <p>Output file: <code><%= result.fileName %></code></p>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/tools/<%= tool.slug %>/process" enctype="multipart/form-data" class="upload-form">
+    <label for="file">Choose a PDF file</label>
+    <input type="file" id="file" name="file" accept="application/pdf" required />
+    <button type="submit" class="btn btn-primary">Process File</button>
+  </form>
+
+  <p class="tool-note">First use is free. After that, start a <a href="/trial">3-day free trial</a> or <a href="/pricing">subscribe</a> for unlimited access.</p>
+</section>
+
+<%- include('partials/footer') %>

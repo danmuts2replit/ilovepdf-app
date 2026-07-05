@@ -1,0 +1,20 @@
+<%- include('layout', { title }) %>
+
+<section class="container pricing-section">
+  <h1>Subscribe</h1>
+  <p>Choose a plan below to unlock unlimited PDF tool access.</p>
+  <div class="plans-grid">
+    <% Object.values(plans).forEach(function(plan) { %>
+      <div class="plan-card">
+        <h2><%= plan.label %></h2>
+        <p class="plan-price">$<%= plan.amountUsd %> <span>/ <%= plan.durationDays %> days</span></p>
+        <form method="POST" action="/payment/initialize">
+          <input type="hidden" name="plan" value="<%= plan.name %>" />
+          <button type="submit" class="btn btn-primary btn-block">Subscribe</button>
+        </form>
+      </div>
+    <% }); %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

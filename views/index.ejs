@@ -1,0 +1,26 @@
+<%- include('layout', { title }) %>
+
+<section class="hero">
+  <div class="container">
+    <h1>Every PDF tool you need, in one app</h1>
+    <p>Merge, split, compress, convert, edit and secure your PDFs. Try any tool free once — no card required.</p>
+    <a class="btn btn-primary" href="/register">Get Started Free</a>
+    <a class="btn btn-outline" href="/pricing">See Pricing</a>
+  </div>
+</section>
+
+<section class="container tools-section">
+  <% categories.forEach(function(category) { %>
+    <h2 class="category-title"><%= category %></h2>
+    <div class="tool-grid">
+      <% tools.filter(function(t){ return t.category === category; }).forEach(function(tool) { %>
+        <a class="tool-card" href="/tools/<%= tool.slug %>">
+          <h3><%= tool.name %></h3>
+          <p><%= tool.description %></p>
+        </a>
+      <% }); %>
+    </div>
+  <% }); %>
+</section>
+
+<%- include('partials/footer') %>

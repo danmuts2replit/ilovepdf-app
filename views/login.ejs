@@ -1,0 +1,22 @@
+<%- include('layout', { title }) %>
+
+<section class="container auth-section">
+  <div class="auth-card">
+    <h1>Log In</h1>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="alert alert-error"><%= error %></p>
+    <% } %>
+    <form method="POST" action="/login">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required autocomplete="email" />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required autocomplete="current-password" />
+
+      <button type="submit" class="btn btn-primary btn-block">Log In</button>
+    </form>
+    <p class="auth-alt">Don't have an account? <a href="/register">Sign up</a></p>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

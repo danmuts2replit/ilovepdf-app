@@ -1,0 +1,28 @@
+{
+  "name": "ilovepdf-app",
+  "version": "1.0.0",
+  "description": "ilovepdf Pro application - PDF tools dashboard, trials, subscriptions, and Paystack payments",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.1",
+    "express-session": "^1.18.0",
+    "helmet": "^7.1.0",
+    "multer": "^2.2.0",
+    "mysql2": "^3.11.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

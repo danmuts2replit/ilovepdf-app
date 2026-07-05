@@ -1,0 +1,16 @@
+<%- include('layout', { title }) %>
+
+<section class="container auth-section">
+  <div class="auth-card">
+    <h1>Start Your 3-Day Free Trial</h1>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="alert alert-error"><%= error %></p>
+    <% } %>
+    <p>Get unlimited access to every PDF tool for 3 days, completely free. No card required. Your trial can only be used once.</p>
+    <form method="POST" action="/trial/start">
+      <button type="submit" class="btn btn-primary btn-block">Start My Free Trial</button>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

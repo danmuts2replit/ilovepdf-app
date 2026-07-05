@@ -1,0 +1,43 @@
+<%- include('layout', { title }) %>
+
+<section class="container admin-section">
+  <h1>Admin Dashboard</h1>
+
+  <div class="status-cards">
+    <div class="status-card"><h3>Total Users</h3><p class="stat-number"><%= stats.totalUsers %></p></div>
+    <div class="status-card"><h3>Active Trials</h3><p class="stat-number"><%= stats.activeTrials %></p></div>
+    <div class="status-card"><h3>Active Subscriptions</h3><p class="stat-number"><%= stats.activeSubscriptions %></p></div>
+    <div class="status-card"><h3>Successful Payments</h3><p class="stat-number"><%= stats.totalPayments %></p></div>
+    <div class="status-card"><h3>Tool Uses</h3><p class="stat-number"><%= stats.totalToolUsages %></p></div>
+    <div class="status-card"><h3>Guests at Limit</h3><p class="stat-number"><%= stats.guestsBlocked %></p></div>
+    <div class="status-card"><h3>Total Revenue</h3><p class="stat-number">$<%= stats.totalRevenue %></p></div>
+  </div>
+
+  <h2>Most Used Tools</h2>
+  <table class="admin-table">
+    <thead><tr><th>Tool</th><th>Uses</th></tr></thead>
+    <tbody>
+      <% mostUsedTools.forEach(function(row) { %>
+        <tr><td><%= row.tool_slug %></td><td><%= row.usage_count %></td></tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <h2>Recent Payments</h2>
+  <table class="admin-table">
+    <thead><tr><th>Email</th><th>Plan</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+    <tbody>
+      <% recentPayments.forEach(function(p) { %>
+        <tr>
+          <td><%= p.email || 'guest' %></td>
+          <td><%= p.plan_name %></td>
+          <td><%= p.currency %> <%= p.amount %></td>
+          <td><%= p.status %></td>
+          <td><%= new Date(p.created_at).toLocaleString() %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</section>
+
+<%- include('partials/footer') %>
