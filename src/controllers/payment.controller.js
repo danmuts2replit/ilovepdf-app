@@ -92,12 +92,16 @@ export async function paymentCallback(req, res, next) {
     const userId = (txData.metadata && txData.metadata.userId) || req.session.userId;
 
     const alreadyProcessed = await isReferenceAlreadyProcessed(reference);
-    let recorded = false;
     if (!alreadyProcessed) {
-      recorded = await recordPayment(txData, 'success', userId);
+      await recordPayment(txData, 'success', userId);
     }
 
-    if (recorded && planName && userId) {
+    // Always attempt subscription creation once the payment is verified successful — even if
+    // the payment row was already recorded by the other handler (callback vs. webhook) — because
+    // createSubscriptionFromPayment() is itself idempotent by paystackReference. This covers the
+    // case where a prior attempt recorded the payment but failed transiently before creating the
+    // subscription; without this, that payer would be stuck without a subscription forever.
+    if (planName && userId) {
       const planDef = getPlan(planName);
       if (planDef) {
         await createSubscriptionFromPayment({
@@ -137,12 +141,13 @@ export async function paystackWebhook(req, res, next) {
       const userId = txData.metadata && txData.metadata.userId;
 
       const alreadyProcessed = await isReferenceAlreadyProcessed(txData.reference);
-      let recorded = false;
       if (!alreadyProcessed) {
-        recorded = await recordPayment(txData, 'success', userId);
+        await recordPayment(txData, 'success', userId);
       }
 
-      if (recorded && planName && userId) {
+      // See paymentCallback() for why subscription creation always runs (idempotent by
+      // paystackReference) instead of being gated on whether this handler recorded the payment.
+      if (planName && userId) {
         const planDef = getPlan(planName);
         if (planDef) {
           await createSubscriptionFromPayment({
