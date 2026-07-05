@@ -11,4 +11,11 @@ const pool = mysql.createPool({
   dateStrings: false,
 });
 
+// mysql2 pools emit background 'error' events for idle-connection failures
+// (independent of any in-flight query promise). Without a listener, Node
+// treats this as an uncaught exception and crashes the whole process.
+pool.on('error', (err) => {
+  console.error('MySQL pool error:', err.message);
+});
+
 export default pool;
