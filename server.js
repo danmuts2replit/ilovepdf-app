@@ -21,6 +21,7 @@ import { attachSubscriptionStatus } from './src/middleware/subscription.middlewa
 import { notFoundHandler, errorHandler } from './src/middleware/error.middleware.js';
 import { PLANS } from './src/config/plans.js';
 import { TOOLS, CATEGORIES } from './src/config/tools.js';
+import { getToolIcon } from './src/config/toolIcons.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -72,6 +73,7 @@ app.use(attachSubscriptionStatus);
 app.locals.MAIN_SITE_URL = process.env.MAIN_SITE_URL || 'https://ilovepdf.shop';
 app.locals.APP_URL = process.env.APP_URL || 'https://app.ilovepdf.shop';
 app.locals.PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY || '';
+app.locals.getToolIcon = getToolIcon;
 
 app.get('/', (req, res) => {
   res.render('index', { title: 'ilovepdf Pro App', tools: TOOLS, categories: CATEGORIES, plans: PLANS });

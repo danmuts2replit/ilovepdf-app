@@ -1,0 +1,83 @@
+const ICONS = {
+  merge: '<path d="M8 3v6l4 4 4-4V3"/><path d="M4 21h16"/><path d="M8 21v-6l4-4 4 4v6"/>',
+  split: '<path d="M6 3h9a3 3 0 0 1 3 3v3"/><path d="M18 15v3a3 3 0 0 1-3 3H6"/><path d="M3 12h6m0 0-3-3m3 3-3 3"/><path d="M21 12h-6m0 0 3-3m-3 3 3 3"/>',
+  compress: '<path d="M4 9V5a1 1 0 0 1 1-1h4"/><path d="M20 9V5a1 1 0 0 0-1-1h-4"/><path d="M4 15v4a1 1 0 0 0 1 1h4"/><path d="M20 15v4a1 1 0 0 1-1 1h-4"/><path d="M9 9 5 5m10 4 4-4M9 15l-4 4m10-4 4 4"/>',
+  word: '<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M15 2v5h5"/><path d="M7 13l1.5 6L10 14l1.5 5L13 13"/>',
+  excel: '<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M15 2v5h5"/><path d="M8 13l6 6M14 13l-6 6"/>',
+  ppt: '<path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M15 2v5h5"/><path d="M8 12h3a2 2 0 0 1 0 4H8v-4z"/><path d="M8 16v3"/>',
+  image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-9 9"/>',
+  edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  organize: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  rotate: '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/>',
+  watermark: '<path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+  sign: '<path d="M3 17s2-1 4-1 3 1 5 1 3-1 5-1 4 1 4 1"/><path d="M6 14 15 5a2.1 2.1 0 0 1 3 3l-9 9-4 1z"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  unlock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.4-2"/>',
+  redact: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 12h4M13 9h4M13 15h4"/>',
+  compare: '<path d="M9 3v18"/><path d="M15 3v18"/><path d="M4 8h5M4 16h5"/><path d="M15 8h5M15 16h5"/>',
+  repair: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.8-2.8Z"/>',
+  scan: '<path d="M4 8V5a1 1 0 0 1 1-1h3M4 16v3a1 1 0 0 0 1 1h3M20 8V5a1 1 0 0 0-1-1h-3M20 16v3a1 1 0 0 1-1 1h-3"/><path d="M4 12h16"/>',
+  html: '<path d="M8 3 4 12l4 9M16 3l4 9-4 9"/>',
+  archive: '<path d="M21 8V21H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/>',
+  text: '<path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h7"/>',
+  ai: '<path d="M12 2l1.6 4.6L18 8l-4.4 1.6L12 14l-1.6-4.4L6 8l4.4-1.4L12 2z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"/>',
+};
+
+const COLORS = {
+  merge: '#e5322d',
+  split: '#f5a623',
+  compress: '#8e44ad',
+  word: '#2b579a',
+  excel: '#1e7145',
+  ppt: '#d24726',
+  image: '#8e44ad',
+  edit: '#2f9e6e',
+  organize: '#e5322d',
+  rotate: '#0e9aa7',
+  watermark: '#3a86c8',
+  sign: '#2f9e6e',
+  lock: '#c0392b',
+  unlock: '#c0392b',
+  redact: '#c0392b',
+  compare: '#0e9aa7',
+  repair: '#f5a623',
+  scan: '#8e44ad',
+  html: '#3a86c8',
+  archive: '#6c757d',
+  text: '#6c757d',
+  ai: '#8e44ad',
+};
+
+const RULES = [
+  [/^merge-pdf$/, 'merge'],
+  [/^split-pdf$|remove-pages|extract-pages|delete-blank-pages/, 'split'],
+  [/^compress-pdf$/, 'compress'],
+  [/pdf-to-word|word-to-pdf/, 'word'],
+  [/pdf-to-excel|excel-to-pdf/, 'excel'],
+  [/pdf-to-powerpoint|powerpoint-to-pdf/, 'ppt'],
+  [/pdf-to-jpg|jpg-to-pdf|scan-to-pdf/, 'image'],
+  [/organize-pdf|n-up-pdf/, 'organize'],
+  [/^rotate-pdf$/, 'rotate'],
+  [/add-watermark/, 'watermark'],
+  [/^sign-pdf$/, 'sign'],
+  [/^protect-pdf$/, 'lock'],
+  [/^unlock-pdf$/, 'unlock'],
+  [/redact-pdf/, 'redact'],
+  [/compare-pdf/, 'compare'],
+  [/^repair-pdf$/, 'repair'],
+  [/^ocr-pdf$/, 'scan'],
+  [/html-to-pdf/, 'html'],
+  [/pdf-to-pdfa|grayscale-pdf/, 'archive'],
+  [/edit-pdf|crop-pdf|flatten-pdf|add-page-numbers/, 'edit'],
+  [/pdf-to-text/, 'text'],
+  [/chat-with-pdf|summarize-pdf/, 'ai'],
+];
+
+export function getToolIcon(slug) {
+  const match = RULES.find(([pattern]) => pattern.test(slug));
+  const key = match ? match[1] : 'edit';
+  return {
+    color: COLORS[key],
+    paths: ICONS[key],
+  };
+}

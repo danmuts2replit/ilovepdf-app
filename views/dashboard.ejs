@@ -40,8 +40,13 @@
 
   <h2>All Tools</h2>
   <div class="tool-grid">
-    <% tools.forEach(function(tool) { %>
+    <% tools.forEach(function(tool) {
+         const icon = getToolIcon(tool.slug);
+    %>
       <a class="tool-card" href="/tools/<%= tool.slug %>">
+        <div class="tool-icon" style="background: <%= icon.color %>1a; color: <%= icon.color %>;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><%- icon.paths %></svg>
+        </div>
         <h3><%= tool.name %></h3>
         <p><%= tool.description %></p>
       </a>

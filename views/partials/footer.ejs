@@ -1,8 +1,32 @@
   </main>
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>&copy; <%= new Date().getFullYear() %> ilovepdf Pro. All rights reserved.</p>
-      <p><a href="<%= MAIN_SITE_URL %>">ilovepdf.shop</a></p>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="logo" href="/">ilove<span>pdf</span><small>PRO</small></a>
+          <p>Every PDF tool you need, at your fingertips. Merge, split, compress, convert, edit and secure your PDFs in one place.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="/">Tools</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/trial">Free Trial</a>
+        </div>
+        <div class="footer-col">
+          <h4>Account</h4>
+          <a href="/register">Sign Up</a>
+          <a href="/login">Log In</a>
+          <a href="/dashboard">Dashboard</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="<%= MAIN_SITE_URL %>">ilovepdf.shop</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <%= new Date().getFullYear() %> ilovepdf Pro. All rights reserved.</p>
+        <p><a href="<%= MAIN_SITE_URL %>">ilovepdf.shop</a></p>
+      </div>
     </div>
   </footer>
   <script src="/js/app.js"></script>
