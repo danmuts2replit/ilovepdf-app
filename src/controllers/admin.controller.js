@@ -9,7 +9,7 @@ export function renderAdminLogin(req, res) {
   if (req.session && req.session.isAdmin) {
     return res.redirect('/admin');
   }
-  res.render('admin-login', { title: 'Admin Login', error: null });
+  res.render('admin-login', { title: 'Admin Login', error: null, noindex: true });
 }
 
 export function adminLogin(req, res) {
@@ -20,11 +20,12 @@ export function adminLogin(req, res) {
     return res.status(503).render('404', {
       title: 'Admin Disabled',
       message: 'Set ADMIN_KEY in your environment to enable the admin dashboard.',
+      noindex: true,
     });
   }
 
   if (key !== expected) {
-    return res.status(403).render('admin-login', { title: 'Admin Login', error: 'Invalid admin key.' });
+    return res.status(403).render('admin-login', { title: 'Admin Login', error: 'Invalid admin key.', noindex: true });
   }
 
   req.session.isAdmin = true;
@@ -77,6 +78,7 @@ export async function renderAdmin(req, res, next) {
       },
       mostUsedTools,
       recentPayments,
+      noindex: true,
     });
   } catch (err) {
     next(err);

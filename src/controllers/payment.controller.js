@@ -46,7 +46,7 @@ export async function initializePayment(req, res, next) {
   try {
     const { plan } = req.body;
     const planDef = getPlan(plan);
-    if (!planDef) return res.status(400).render('payment-failed', { title: 'Payment Failed', message: 'Invalid plan selected.' });
+    if (!planDef) return res.status(400).render('payment-failed', { title: 'Payment Failed', message: 'Invalid plan selected.', noindex: true });
 
     const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [req.session.userId]);
     const user = rows[0];
@@ -64,6 +64,7 @@ export async function initializePayment(req, res, next) {
       return res.status(502).render('payment-failed', {
         title: 'Payment Failed',
         message: 'Could not start the payment. Please try again.',
+        noindex: true,
       });
     }
 
@@ -77,7 +78,7 @@ export async function paymentCallback(req, res, next) {
   try {
     const reference = req.query.reference || req.query.trxref;
     if (!reference) {
-      return res.render('payment-failed', { title: 'Payment Failed', message: 'Missing payment reference.' });
+      return res.render('payment-failed', { title: 'Payment Failed', message: 'Missing payment reference.', noindex: true });
     }
 
     const verification = await verifyTransaction(reference);
@@ -85,7 +86,7 @@ export async function paymentCallback(req, res, next) {
 
     if (!verification.status || !txData || txData.status !== 'success') {
       await recordPayment(txData, 'failed', req.session.userId);
-      return res.render('payment-failed', { title: 'Payment Failed', message: 'Your payment was not successful.' });
+      return res.render('payment-failed', { title: 'Payment Failed', message: 'Your payment was not successful.', noindex: true });
     }
 
     const planName = txData.metadata && txData.metadata.planName;
@@ -118,6 +119,7 @@ export async function paymentCallback(req, res, next) {
       title: 'Payment Successful',
       heading: 'Subscription Activated',
       message: 'Your subscription is now active. Enjoy unlimited access to every PDF tool!',
+      noindex: true,
     });
   } catch (err) {
     next(err);

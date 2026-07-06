@@ -4,9 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= title %> | ilovepdf Pro</title>
-  <meta name="description" content="Every PDF tool you need, in one app. Merge, split, compress, convert, edit and secure your PDFs." />
+  <meta name="description" content="<%= locals.description || 'Every PDF tool you need, in one app. Merge, split, compress, convert, edit and secure your PDFs. Your first 7 tool uses are free — no card required.' %>" />
+  <% if (locals.noindex) { %>
+    <meta name="robots" content="noindex, nofollow" />
+  <% } else { %>
+    <meta name="robots" content="index, follow" />
+  <% } %>
+  <% if (locals.canonicalUrl) { %>
+    <link rel="canonical" href="<%= locals.canonicalUrl %>" />
+  <% } %>
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ilovepdf Pro" />
+  <meta property="og:title" content="<%= title %> | ilovepdf Pro" />
+  <meta property="og:description" content="<%= locals.description || 'Every PDF tool you need, in one app. Merge, split, compress, convert, edit and secure your PDFs.' %>" />
+  <% if (locals.canonicalUrl) { %>
+    <meta property="og:url" content="<%= locals.canonicalUrl %>" />
+  <% } %>
+  <meta property="og:image" content="<%= APP_URL %>/images/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<%= title %> | ilovepdf Pro" />
+  <meta name="twitter:description" content="<%= locals.description || 'Every PDF tool you need, in one app. Merge, split, compress, convert, edit and secure your PDFs.' %>" />
+  <meta name="twitter:image" content="<%= APP_URL %>/images/og-image.png" />
+
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+
+  <% if (locals.jsonLd) { %>
+    <script type="application/ld+json"><%- JSON.stringify(jsonLd) %></script>
+  <% } %>
 </head>
 <body>
   <header class="site-header">

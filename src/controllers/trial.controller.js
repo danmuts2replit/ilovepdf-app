@@ -2,7 +2,7 @@ import pool from '../config/database.js';
 import { startTrial } from '../services/trial.service.js';
 
 export function renderTrialPage(req, res) {
-  res.render('trial', { title: 'Start Your Free Trial', error: null });
+  res.render('trial', { title: 'Start Your Free Trial', error: null, noindex: true });
 }
 
 export async function startTrialHandler(req, res, next) {
@@ -16,6 +16,7 @@ export async function startTrialHandler(req, res, next) {
       return res.status(400).render('trial', {
         title: 'Start Your Free Trial',
         error: 'You have already used your free trial.',
+        noindex: true,
       });
     }
 

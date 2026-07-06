@@ -20,6 +20,7 @@ export async function renderDashboard(req, res, next) {
       user,
       freeUsesRemaining,
       tools: TOOLS,
+      noindex: true,
     });
   } catch (err) {
     next(err);

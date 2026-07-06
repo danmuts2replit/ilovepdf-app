@@ -73,20 +73,72 @@ app.locals.MAIN_SITE_URL = process.env.MAIN_SITE_URL || 'https://ilovepdf.shop';
 app.locals.APP_URL = process.env.APP_URL || 'https://app.ilovepdf.shop';
 app.locals.PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY || '';
 
+app.use((req, res, next) => {
+  res.locals.canonicalUrl = `${app.locals.APP_URL}${req.originalUrl.split('?')[0]}`;
+  next();
+});
+
 app.get('/', (req, res) => {
-  res.render('index', { title: 'ilovepdf Pro App', tools: TOOLS, categories: CATEGORIES, plans: PLANS });
+  res.render('index', {
+    title: 'ilovepdf Pro App',
+    tools: TOOLS,
+    categories: CATEGORIES,
+    plans: PLANS,
+    description:
+      'Every PDF tool you need, in one app. Merge, split, compress, convert, edit and secure your PDFs. Your first 7 tool uses are free — no card required.',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'ilovepdf Pro',
+      url: app.locals.APP_URL,
+      applicationCategory: 'Utility',
+      operatingSystem: 'Any (Web-based)',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'KES',
+        description: 'First 7 tool uses are free, no card required.',
+      },
+      description:
+        'Every PDF tool you need, in one app. Merge, split, compress, convert, edit and secure your PDFs.',
+    },
+  });
 });
 
 app.get('/pricing', (req, res) => {
-  res.render('pricing', { title: 'Pricing', plans: PLANS });
+  res.render('pricing', {
+    title: 'Pricing',
+    plans: PLANS,
+    description: 'Simple, transparent pricing for unlimited access to every PDF tool. Pick a plan that works for you.',
+  });
 });
 
 app.get('/subscribe', (req, res) => {
-  res.render('subscribe', { title: 'Subscribe', plans: PLANS });
+  res.render('subscribe', { title: 'Subscribe', plans: PLANS, noindex: true });
 });
 
 app.get('/usage-blocked', (req, res) => {
-  res.render('usage-blocked', { title: 'Free Use Already Claimed' });
+  res.render('usage-blocked', { title: 'Free Use Already Claimed', noindex: true });
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const baseUrl = app.locals.APP_URL;
+  const staticUrls = [
+    { loc: `${baseUrl}/`, priority: '1.0' },
+    { loc: `${baseUrl}/pricing`, priority: '0.8' },
+  ];
+  const toolUrls = TOOLS.filter((t) => t.available).map((t) => ({
+    loc: `${baseUrl}/tools/${t.slug}`,
+    priority: '0.7',
+  }));
+
+  const urls = [...staticUrls, ...toolUrls];
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
+    .map((u) => `  <url>\n    <loc>${u.loc}</loc>\n    <priority>${u.priority}</priority>\n  </url>`)
+    .join('\n')}\n</urlset>\n`;
+
+  res.header('Content-Type', 'application/xml');
+  res.send(xml);
 });
 
 app.use(authRoutes);

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /trial
+Disallow: /subscribe
+Disallow: /usage-blocked
+Disallow: /payment
+Disallow: /tools/*/download/
+
+Sitemap: https://app.ilovepdf.shop/sitemap.xml

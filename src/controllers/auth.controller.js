@@ -3,11 +3,11 @@ import pool from '../config/database.js';
 import { isValidEmail, isStrongEnoughPassword, sanitizeName } from '../utils/validators.js';
 
 export function renderLogin(req, res) {
-  res.render('login', { title: 'Log In', error: null });
+  res.render('login', { title: 'Log In', error: null, noindex: true });
 }
 
 export function renderRegister(req, res) {
-  res.render('register', { title: 'Create Account', error: null });
+  res.render('register', { title: 'Create Account', error: null, noindex: true });
 }
 
 export async function login(req, res, next) {
@@ -15,14 +15,14 @@ export async function login(req, res, next) {
     const { email, password } = req.body;
 
     if (!isValidEmail(email) || !password) {
-      return res.status(400).render('login', { title: 'Log In', error: 'Please enter a valid email and password.' });
+      return res.status(400).render('login', { title: 'Log In', error: 'Please enter a valid email and password.', noindex: true });
     }
 
     const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [String(email).trim().toLowerCase()]);
     const user = rows[0];
 
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-      return res.status(401).render('login', { title: 'Log In', error: 'Invalid email or password.' });
+      return res.status(401).render('login', { title: 'Log In', error: 'Invalid email or password.', noindex: true });
     }
 
     req.session.userId = user.id;
@@ -41,6 +41,7 @@ export async function register(req, res, next) {
       return res.status(400).render('register', {
         title: 'Create Account',
         error: 'Please provide a valid email and a password of at least 6 characters.',
+        noindex: true,
       });
     }
 
@@ -50,6 +51,7 @@ export async function register(req, res, next) {
       return res.status(400).render('register', {
         title: 'Create Account',
         error: 'An account with this email already exists.',
+        noindex: true,
       });
     }
 
