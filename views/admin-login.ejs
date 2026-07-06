@@ -1,0 +1,18 @@
+<%- include('layout', { title }) %>
+
+<section class="container auth-section">
+  <div class="auth-card">
+    <h1>Admin Login</h1>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="alert alert-error"><%= error %></p>
+    <% } %>
+    <form method="POST" action="/admin/login">
+      <label for="key">Admin Key</label>
+      <input type="password" id="key" name="key" required autocomplete="off" autofocus />
+
+      <button type="submit" class="btn btn-primary btn-block">Log In</button>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

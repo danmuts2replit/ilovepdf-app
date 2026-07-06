@@ -8,10 +8,15 @@ export function requireAdminKey(req, res, next) {
     });
   }
 
-  const provided = req.query.key || req.headers['x-admin-key'];
-  if (provided !== expected) {
-    return res.status(403).render('404', { title: 'Forbidden', message: 'Invalid or missing admin key.' });
+  if (req.session && req.session.isAdmin) {
+    return next();
   }
 
-  next();
+  const provided = req.query.key || req.headers['x-admin-key'];
+  if (provided === expected) {
+    req.session.isAdmin = true;
+    return next();
+  }
+
+  return res.redirect('/admin/login');
 }

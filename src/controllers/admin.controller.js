@@ -5,6 +5,39 @@ async function countQuery(sql, params = []) {
   return rows[0].count;
 }
 
+export function renderAdminLogin(req, res) {
+  if (req.session && req.session.isAdmin) {
+    return res.redirect('/admin');
+  }
+  res.render('admin-login', { title: 'Admin Login', error: null });
+}
+
+export function adminLogin(req, res) {
+  const expected = process.env.ADMIN_KEY;
+  const { key } = req.body;
+
+  if (!expected) {
+    return res.status(503).render('404', {
+      title: 'Admin Disabled',
+      message: 'Set ADMIN_KEY in your environment to enable the admin dashboard.',
+    });
+  }
+
+  if (key !== expected) {
+    return res.status(403).render('admin-login', { title: 'Admin Login', error: 'Invalid admin key.' });
+  }
+
+  req.session.isAdmin = true;
+  res.redirect('/admin');
+}
+
+export function adminLogout(req, res) {
+  if (req.session) {
+    req.session.isAdmin = false;
+  }
+  res.redirect('/admin/login');
+}
+
 export async function renderAdmin(req, res, next) {
   try {
     const totalUsers = await countQuery('SELECT COUNT(*) AS count FROM users');

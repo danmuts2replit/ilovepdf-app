@@ -1,7 +1,10 @@
 <%- include('layout', { title }) %>
 
 <section class="container admin-section">
-  <h1>Admin Dashboard</h1>
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <a href="/admin/logout" class="btn btn-outline btn-sm">Log Out</a>
+  </div>
 
   <div class="status-cards">
     <div class="status-card"><h3>Total Users</h3><p class="stat-number"><%= stats.totalUsers %></p></div>
