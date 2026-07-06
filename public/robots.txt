@@ -9,5 +9,6 @@ Disallow: /subscribe
 Disallow: /usage-blocked
 Disallow: /payment
 Disallow: /tools/*/download/
+Disallow: /*/download/
 
 Sitemap: https://app.ilovepdf.shop/sitemap.xml

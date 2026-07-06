@@ -32,6 +32,14 @@ export function renderToolPage(req, res) {
   res.render('tool', { title: tool.name, tool, result: null, ...buildToolSeoLocals(tool) });
 }
 
+// The tool pages used to live under /tools/:slug; they now live at the flat root URL /:slug for
+// SEO (shorter, keyword-matching long-tail URLs). Permanently redirect so any existing links,
+// bookmarks, or search engine index entries carry over to the new URL instead of 404ing.
+export function redirectLegacyToolPage(req, res) {
+  const { slug } = req.params;
+  res.redirect(301, `/${slug}`);
+}
+
 export async function processToolUpload(req, res, next) {
   try {
     const { slug } = req.params;

@@ -10,7 +10,7 @@ import rateLimit from 'express-rate-limit';
 
 import authRoutes from './src/routes/auth.routes.js';
 import dashboardRoutes from './src/routes/dashboard.routes.js';
-import toolsRoutes from './src/routes/tools.routes.js';
+import toolsRoutes, { cleanToolRouter } from './src/routes/tools.routes.js';
 import paymentRoutes from './src/routes/payment.routes.js';
 import trialRoutes from './src/routes/trial.routes.js';
 import adminRoutes from './src/routes/admin.routes.js';
@@ -128,7 +128,7 @@ app.get('/sitemap.xml', (req, res) => {
     { loc: `${baseUrl}/pricing`, priority: '0.8' },
   ];
   const toolUrls = TOOLS.filter((t) => t.available).map((t) => ({
-    loc: `${baseUrl}/tools/${t.slug}`,
+    loc: `${baseUrl}/${t.slug}`,
     priority: '0.7',
   }));
 
@@ -148,6 +148,10 @@ app.use(paymentRoutes);
 app.use(trialRoutes);
 app.use(adminRoutes);
 app.use(apiRoutes);
+
+// Flat, long-tail tool URLs (e.g. /word-to-pdf) — mounted last so every named route above
+// (/login, /admin, /trial, etc.) is matched first and only genuine tool slugs reach here.
+app.use(cleanToolRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
